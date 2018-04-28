@@ -42,6 +42,10 @@ input:focus
     left: 0;
     background: rgba(0,0,0,0.5);
 
+.center-center
+    @include center-center;
+    margin: 0!important;
+
 // 整体布局
 #app
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -64,7 +68,7 @@ input:focus
         left: 0;
         background: #fff;
 
-    .main
+    >.main
         position: relative;
         padding: 90px 0 50px;
         overflow: auto;
@@ -80,7 +84,7 @@ input:focus
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 10;
+            z-index: 3;
             .tip
                 font-size: 12px;
                 color: #878A92;
@@ -226,11 +230,26 @@ input:focus
     z-index: 5;
     .box
         @include center-center;
+        width: 780px;
+        &.large
+            width: 960px;
+            .main
+                height: 550px;
+        &.small
+            width: 390px;
+            .main
+                height: 230px;
         .title
             padding: 0 10px;
             line-height: 30px;
             background: #fff;
-
+            .fr
+                margin-top: 5px;
+                cursor: pointer;
+        .main
+            background: #FBFCFD;
+            overflow: auto;
+            height: 460px;
 
 
 // 悬浮框

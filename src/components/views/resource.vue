@@ -38,7 +38,15 @@ div
                         i.el-icon-picture-outline
                         | 视频素材
                     span(v-if="item.size") ({{item.size | size}})
-            .see 点击查看
+            .see(@click="viewImg(item.image)") 点击查看
+
+    .fix-box(v-show="isView")
+        .box
+            .title
+                span 素材查看
+                i.fr.el-icon-close(@click="isView=false;curViewImage=''")
+            .main(style="text-align:center;")
+                img.img-view(:src="curViewImage")
 
     //- .edit-ctn.fix-cover(v-show="showEditCtn")
         .box
@@ -85,7 +93,7 @@ div
 
 <script>
 export default {
-    name: 'place',
+    name: 'resource',
     mixins: [tableManage],
     data () {
         return {
@@ -107,6 +115,8 @@ export default {
                 }
                 
             ],
+            curViewImage: '',
+            isView: false,
             keys: [
                 { str: '地址', key: 'address' },
                 { str: '小区名称', key: 'placeName' },
@@ -146,10 +156,20 @@ export default {
                     if(w/h > 3/2){  //  180/120
                         $(el).css({height:'100%'})
                     }else{
-                        $(el).css({width:'100%'}) 
+                        $(el).css({width:'100%'})
                     }
                 }
             })
+        },
+        viewImg(src, isImage){    // 查看素材, 
+            this.isView = true;
+            if(!isImage){
+                this.curViewImage = src;
+                $('.img-view').get(0).onload = function(){
+                    $(this).removeClass('center-center');
+                    if(this.height < $(this).parent().height()) $(this).addClass('center-center');
+                }
+            }
         },
         changeSearchValue(info){
             info.operatorUserId = localStorage.zlOpUid || 43;
@@ -168,11 +188,16 @@ export default {
             return { id: row.id }
         }
     }
-
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="sass" scoped>
+.img-view
+    width: 680px;
+    margin: 20px auto;
+    height: auto;
 
+.see
+    cursor: pointer;
 </style>
