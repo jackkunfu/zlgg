@@ -31,7 +31,8 @@ export default {
             this.tableSearchReset.call(this);
         },
         add(){   // 新增
-            this.curOperateType = 1
+            alert(1)
+            this.curOperateType = 1;
             this.tableAdd.call(this);
         },
         edit(){   // 编辑
@@ -67,6 +68,10 @@ export default {
         },
         upfile(){   // 上传文件
             this.upfileProto.apply(this, arguments);
+        },
+        op(funStr){    //  操作包装方法
+            var args = Array.prototype.slice.call(arguments, 1);
+            if(funStr && typeof this[funStr] == 'function') this[funStr](...args);
         }
     }
 }

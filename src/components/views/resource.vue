@@ -8,9 +8,34 @@ div
         .fr
             .gg-btn 上传
                 input.upfile(type="file" @change="upfile('up1')" ref="up1")
-            .gg-btn.white 转为UI素材
+            .gg-btn.white(@click="revertUI") 转为UI素材
             .gg-btn.white 审批
             .gg-btn.white(@click="del") 删除
+    
+    .main-filter
+        .fl
+            | 筛选条件： 
+            span(:class="showFilter ? 'open' : ''" @click="showFilter=!showFilter;") 展开
+                i.el-icon-caret-left
+
+        .fr
+            .ft-btn(@click="search")
+                i.el-icon-search
+                span 查询
+            .ft-btn(@click="reset")
+                i.el-icon-refresh
+                span 重置
+
+    .filter-box(:class="showFilter ? 'open' : ''")
+        .gg-input
+            span aa
+            input(autocomplete="off")
+
+        .gg-input
+            span 用户名
+            input(autocomplete="off")
+            
+
         //- .page-title 小区管理
         //- .search-ctn
             el-form(:model="searchInfo" label-width="80px")
@@ -98,6 +123,7 @@ export default {
     mixins: [tableManage],
     data () {
         return {
+            showFilter: false,   // 是否暂时筛选条件
             list: [
                 {
                     image: 'http://img.hb.aicdn.com/2347b45b5fedd832b1378debc07bef8381599a8e72840-yJgXXj_fw658',
@@ -114,16 +140,19 @@ export default {
                     time: '2016/01/01',
                     type: 2
                 }
-                
             ],
             curViewImage: '',
             isView: false,
-            keys: [
-                { str: '地址', key: 'address' },
-                { str: '小区名称', key: 'placeName' },
-                { str: '详细地址', key: 'address' },
-                { str: '百度坐标', key: 'remark' }
-            ],
+            // keys: [
+            //     { str: '广告主', key: 'address' },
+            //     { str: '素材类型', key: 'placeName' },
+            //     { str: '素材名称', key: 'address' },
+            //     { str: '总播放次数', key: 'remark' },
+            //     { str: '播放单个数', key: 'remark' },
+            //     { str: '播放开始时间', key: 'remark' },
+            //     { str: '播放结束时间', key: 'remark' },
+            //     { str: '授权电梯', key: 'remark' },
+            // ],
             searchKeys: ['address'],
             editKeys: ['placeName', 'contactPhone', 'contacter', 'address', 'lon', 'lat', 'createyear', 'remark', 'character'],
             api: {
@@ -187,6 +216,14 @@ export default {
         },
         handleDelRow(row){    // 删除请求之前处理参数，一般用于传参不统一  有的传id 有guid..
             return { id: row.id }
+        },
+        revertUI(){    // 转UI素材
+
+        },
+        getChoose(){
+            var data = this.list.filter( v => v.checked );
+            console.log(data);
+            // return this.list.filter( v => v.checked );
         }
     }
 }
