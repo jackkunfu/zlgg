@@ -5,7 +5,7 @@ import App from './App'
 import router from './router'
 
 // import proto from './basic/proto'    //  表格操作每一行需要全局的curChooseRow数据
-import proto from './basic/protoScope'    //  表格操作每一行需要传递每一行的scope数据
+import proto from './basic/proto'    //  表格操作每一行需要传递每一行的scope数据
 import filter from './basic/filter'
 
 import './basic/function'
@@ -17,7 +17,7 @@ Vue.use(filter)
 // webpack2 vue 异步引用组件
 Vue.component('SelfTable', () => import('@/components/part/table.vue'))
 // import tableManage from './basic/mixs/table';
-import tableManage from './basic/mixs/tableScope';
+import tableManage from './basic/mixs/table';
 window.tableManage = tableManage;
 
 Vue.config.productionTip = false

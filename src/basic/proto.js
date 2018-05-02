@@ -172,7 +172,18 @@ export default function(Vue){
         var res = await this.ajax('/dist/queryDistAuthedTree', { operatorUserId: localStorage.zlOpUid || 43, level: 4 }, 'get');
         if(res.code == 0 && res.data && res.data.length > 0) return res.data;
         else return [];
-    }
+    },
+
+    Vue.prototype.upfileProto = async function(str, cb){
+        var data = this.$refs[str].files[0];
+        console.log(data);
+        var fd = new FormData();
+        fd.append('file', data);
+        var up = await this.ajax('', fd)
+        if(up && up.code == 200){
+            if(cb && typeof this[cb] == 'function') this[cb](up.data);
+        }
+    },
 
 
     // // 点击地区树节点获取数据(暂无用)
@@ -187,5 +198,37 @@ export default function(Vue){
     // Vue.prototype.cancelChooseDist = function(key){
     //     Object.assign(this[key], this.distInfo || null);
     // }
+
+    // 点击修改(行内触发)
+    Vue.prototype.tableEditScope = function(){
+        console.log(arguments[0])
+        var row = arguments[0].row || {};
+        if(this.selfEdit && typeof this.selfEdit == 'function') this.selfEdit();
+        this.editKeys.forEach( v => {
+            this.editInfo[v] = row[v] || '';
+        })
+        this.curChooseRow = row
+        // this.editInfo = Object.assign({}, arguments[0].row || {});
+        this.showEditCtn = true;
+    }
+    // 点击删除(行内触发)
+    Vue.prototype.tableDelScope = function(){
+        console.log(arguments[0])
+        this.$confirm('此操作将删除用户, 是否继续?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+        }).then(async () => {
+            var op = this.api.del;
+            var neesChangeOptions = this.handleDelRow && typeof this.handleDelRow == 'function'
+            var oriData = Object.assign({}, arguments[0].row || {});
+            var options = neesChangeOptions ? this.handleDelRow(oriData) : { guid: oriData.guid }
+            var res = await this.ajax(op.url, options, op.type || 'delete')
+            if(res.code == 0){
+                this.messageTip(res.message || '操作成功', 1);
+                this.tableList.call(this);
+            }else this.messageTip(res.message || '操作失败')
+        }).catch(() => {});
+    }
     
 }

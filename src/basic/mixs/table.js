@@ -41,6 +41,13 @@ export default {
         del(){ // 删除
             this.tableDel.call(this, arguments[0]);
         },
+        editScope(){   // 编辑(行内)
+            this.curOperateType = 2
+            this.tableEditScope.call(this, arguments[0]);
+        },
+        delScope(){ // 删除(行内)
+            this.tableDelScope.call(this, arguments[0]);
+        },
         addOrUpdate(){   //  新增 编辑确认提交
             this.tableAddOrUpdate.call(this);
         },
@@ -58,12 +65,8 @@ export default {
         chooseRow(curItem, oldItem){   //  点击列表某一行
             this.curChooseRow = curItem
         },
-        
-        // add(){
-        //     this.tableAdd.call(this);
-        // },
-        // add(){
-        //     this.tableAdd.call(this);
-        // }
+        upfile(){   // 上传文件
+            this.upfileProto.apply(this, arguments);
+        }
     }
 }

@@ -7,6 +7,7 @@ div
 
         .fr
             .gg-btn 上传
+                input.upfile(type="file" @change="upfile('up1')" ref="up1")
             .gg-btn.white 转为UI素材
             .gg-btn.white 审批
             .gg-btn.white(@click="del") 删除

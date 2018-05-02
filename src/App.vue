@@ -51,7 +51,7 @@ export default {
             },
             isResLogin: false,
             userImage: localStorage.zlOpUserInfo ? JSON.parse(localStorage.zlOpUserInfo).image : '',
-            isNeedLogin: !localStorage.zlUserToken || localStorage.zlUserToken === null || localStorage.zlUserToken === undefined || localStorage.zlUserToken === 'undefined'
+            isNeedLogin: !localStorage.zlUserToken || localStorage.zlUserToken === 'null' || localStorage.zlUserToken === 'undefined'
         }
     },
     async mounted(){
