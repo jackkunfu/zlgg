@@ -50,8 +50,6 @@ export default {
         }
     },
     mounted(){
-        console.log('this.hide')
-        console.log(this.hidePage)
     },
     methods: {
         operate(fun, scope){    // 操作
