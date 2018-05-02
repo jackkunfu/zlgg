@@ -35,7 +35,7 @@
                     el-button(v-for="(op, i) in scopeOperates" type="success" size="small" :key="op.str"
                         @click="operate(op.fun, scope)") {{op.str}}
 
-        el-pagination(v-if="hide!='hide'" layout="total, prev, pager, next, jumper" :total="total" :page-size="10"
+        el-pagination(v-if="!hidePage" layout="total, prev, pager, next, jumper" :total="total" :page-size="10"
             :current-page="currentPage" @current-change="handleCurrentChange" ref="page")
 
 </template>
@@ -43,7 +43,7 @@
 <script>
 export default {
     name: 'tableComponent',
-    props: ['keys', 'operates', 'selfApi', 'tableData', 'total', 'currentPage', 'tabOp', 'canOp', 'scopeOperates', 'hide'],
+    props: ['keys', 'operates', 'selfApi', 'tableData', 'total', 'currentPage', 'tabOp', 'canOp', 'scopeOperates', 'hidePage'],
     data(){
         return{
             isCanOp: this.canOp
@@ -51,7 +51,7 @@ export default {
     },
     mounted(){
         console.log('this.hide')
-        console.log(this.hide)
+        console.log(this.hidePage)
     },
     methods: {
         operate(fun, scope){    // 操作

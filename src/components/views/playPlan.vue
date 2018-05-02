@@ -45,7 +45,7 @@ div
                 span 播出单详情
                 i.fr.el-icon-close(@click="isView=false;curViewImage=''")
             .main(style="text-align:center;")
-                self-table(:keys="detailKeys" :tableData="detailTableData" :total="total" hide)
+                self-table(:keys="detailKeys" :tableData="detailTableData" :total="total" hidePage)
     
 </template>
 
@@ -56,7 +56,7 @@ export default {
     data () {
         return {
             showFilter: false,
-            isView: true,
+            isView: false,
             detailTableData: [],
             detailKeys: [
                 { str: '播放单名称', key: 'guid' },
