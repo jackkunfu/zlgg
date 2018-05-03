@@ -9,7 +9,12 @@
             .user
                 img(:src="userImage")
                 .name 明达广告
+
             left
+
+            .left-bottom
+                .half(@click="isChangePwd=true;") 修改密码
+                .half(@click="exit") 退出
 
         router-view.main
             
@@ -34,6 +39,23 @@
             el-form-item
                 el-button(type="primary" ) 登录
 
+    .fix-box(v-show="isChangePwd")
+        .box
+            .title
+                span 修改密码
+                i.fr.el-icon-close(@click="isChangePwd=false;")
+            .main(style="text-align:center;")
+                .gg-input
+                    span 旧密码
+                    input(v-model="change.oldPwd" autocomplete="off")
+
+                .gg-input
+                    span 新密码
+                    input(v-model="change.newPwd" type="password" autocomplete="off")
+
+                .btn-ctn
+                    .gg-btn(@click="changePwd") 提交修改
+
 </template>
 
 <script>
@@ -49,7 +71,13 @@ export default {
                 userCode: '',
                 password: ''
             },
-            isResLogin: false,
+            change: {
+                oldPwd: '',
+                newPwd: '',
+                createOper: ''
+            },
+            isResLogin: false,   // 是否请求完毕
+            isChangePwd: false,
             userImage: localStorage.zlOpUserInfo ? JSON.parse(localStorage.zlOpUserInfo).image : '',
             isNeedLogin: !localStorage.zlUserToken || localStorage.zlUserToken === 'null' || localStorage.zlUserToken === 'undefined'
         }
@@ -82,6 +110,17 @@ export default {
                 this.goUrl('/index')
             }
             this.isResLogin = false;
+        },
+        async changePwd(){
+            var res = await this.ajax('/modifyPassword', this.change);
+        },
+        async exit(){
+            var res = await this.ajax('/loginOut');
+            localStorage.zlUserToken = '';
+            this.isNeedLogin = true;
+            if(res && res.code == 200){
+                
+            }
         }
     }
 }

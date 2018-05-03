@@ -29,9 +29,9 @@ module.exports = {
   devServer: {
     proxy: {
       // 请求到 '/api' 下 的请求都会被代理到 target： http://192.168.1.191:18080 中
-      '/api/*': { 
+      '/api': { 
         target: 'http://192.168.1.191:18080',
-        pathRewrite: { '^/api': '' },
+        pathRewrite: { '/api': '' },
         // secure: false, // 接受 运行在 https 上的服务
         changeOrigin: true
       }

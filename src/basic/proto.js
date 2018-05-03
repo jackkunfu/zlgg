@@ -24,14 +24,17 @@ export default function(Vue){
                     withCredentials: true
                 }
             }).done( data => {
-                if(data.code === 403){
-                    this.messageTip(data.message, false);
-                    return null;
-                }else{
-                    rs(data);
-                }
+                // if(data.code === 403) return this.messageTip(data.msg, false);
+                // if(data.code === 900401){
+                //     this.messageTip(data.msg, false);
+                //     this.goUrl('/');
+                // }
+                if(data.code != 200) this.messageTip(data.msg, false);
+                rs(data);
             }).fail(function(e){
-                console.log(1)
+                this.messageTip('请求失败，请稍后重试~', false);
+                console.log('请求出错：' + url)
+                console.log(e)
                 rj(e);
             })
         })

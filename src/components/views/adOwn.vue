@@ -1,44 +1,58 @@
 <template lang="pug">
 div
-    .table-ctn
-        .page-title 用户管理
-        //- .search-ctn
-            el-button(type="success" @click="search") 查询
-            el-button(type="success" @click="reset") 重置
-        self-table(:keys="keys" :tableData="tableData" :total="total" :operates="operates"
-            @changePage="changePage" @chooseRow="chooseRow" @add="add" @edit="edit" @del="del")
+    .main-top
+        .tip
+            | 广告 >> 媒体管理 >> 
+            span 广告主管理
 
-    .edit-ctn.fix-cover(v-show="showEditCtn")
+        .fr
+            .gg-btn(v-for="item in operates" @click="op(item.fun)") {{item.str}}
+    
+    .main-filter
+        .fl
+            | 筛选条件：
+            span(:class="showFilter ? 'open' : ''" @click="showFilter=!showFilter;") 展开
+                i.el-icon-caret-left
+
+        .fr
+            .ft-btn
+                i.el-icon-search
+                span 查询
+            .ft-btn
+                i.el-icon-refresh
+                span 重置
+
+    .filter-box(:class="showFilter ? 'open' : ''")
+        .gg-input
+            span 模糊搜索
+            input(autocomplete="off")
+
+    self-table(:keys="keys" :tableData="tableData" :total="total" :operates="operates"
+        @changePage="changePage" @chooseRow="chooseRow" @add="add" @edit="edit" @del="del" @view="view")
+
+    //- .fix-box(v-show="isView")
         .box
-            el-form(:model="editInfo" label-width="80px")
-                el-form-item(label="应用编号")
-                    el-input(v-model="editInfo.appCode")
-                el-form-item(label="应用名称")
-                    el-input(v-model="editInfo.appName")
-                el-form-item(label="对接URL")
-                    el-input(v-model="editInfo.appUrl")
-                el-form-item(label="描述")
-                    el-input(v-model="editInfo.remark")
-                
-                el-form-item
-                    el-button(type="primary" @click="addOrUpdate") 保存
-                    el-button(type="primary" @click="editCancel") 取消
+            .title
+                span 11
+                i.fr.el-icon-close(@click="isView=false;curViewImage=''")
+            .main(style="text-align:center;")
     
 </template>
 
 <script>
 export default {
-    name: 'application',
-    mixins: [tableManage],
+    name: 'adOwn',
+    mixins: [ tableManage ],
     data () {
         return {
+            showFilter: false,
+            detailTableData: [],
             keys: [
-                { str: '用户编号', key: 'guid' },
-                { str: '用户名', key: 'userCode' },
-                { str: '姓名', key: 'userName' },
-                { str: '手机号码', key: 'mobilephone' },
-                { str: '所属单位', key: 'remark' },
-                { str: '用户地址', key: 'address' }
+                { str: '广告商', key: 'guid' },
+                { str: '企业名称', key: 'userCode' },
+                { str: '企业地址', key: 'userName' },
+                { str: '负责人', key: 'mobilephone' },
+                { str: '联系电话', key: 'remark' }
             ],
             searchKeys: [],
             editKeys: ['userCode', 'userName', 'mobilephone', 'remark', 'address'],
@@ -50,13 +64,22 @@ export default {
             },
             operates: [
                 { str: '新增', fun: 'add'},
-                { str: '修改', fun: 'edit'},
                 { str: '删除', fun: 'del'}
+            ],
+            scopeOperates: [
+                // { str: '查看', fun: 'view'},
             ]
         }
+        
     },
     mounted(){},
     methods: {
+        async view(scope){     // 查看详情
+            var res = this.ajax('', { id: scope.row.id });
+            if(res && res.code == 200){
+                this.detailTableData = res.data;
+            }
+        },
         changeSearchValue(info){
             info.operatorUserId = localStorage.zlOpUid || 43;
             return info;

@@ -7,8 +7,11 @@
 
         //- 表格
         el-table(:data="tableData" @current-change="chooseRow" highlight-current-row)
-            //- 暂时序号
+            //- 展示序号
             //- el-table-column(type="index" width="50")
+
+            //- 展示多选
+            el-table-column(type="selection" width="55" v-if="isMultiSelect")
 
             template(v-for="(item, i) in keys")
                 //- 图片处理
@@ -43,7 +46,7 @@
 <script>
 export default {
     name: 'tableComponent',
-    props: ['keys', 'operates', 'selfApi', 'tableData', 'total', 'currentPage', 'tabOp', 'canOp', 'scopeOperates', 'hidePage'],
+    props: ['keys', 'operates', 'selfApi', 'tableData', 'total', 'currentPage', 'tabOp', 'canOp', 'scopeOperates', 'hidePage', 'isMultiSelect'],
     data(){
         return{
             isCanOp: this.canOp
