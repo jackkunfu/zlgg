@@ -31,8 +31,13 @@ module.exports = {
       // 请求到 '/api' 下 的请求都会被代理到 target： http://192.168.1.191:18080 中
       '/api': { 
         target: 'http://192.168.1.191:18080',
-        pathRewrite: { '/api': '' },
+        pathRewrite: { '^/api': '' },
         // secure: false, // 接受 运行在 https 上的服务
+        changeOrigin: true
+      },
+      '/fs': { 
+        target: 'https://test.yun-ti.com:18082',
+        secure: true, // 接受 运行在 https 上的服务
         changeOrigin: true
       }
     }

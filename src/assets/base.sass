@@ -217,8 +217,26 @@ input:focus
 
 // 翻页
 .el-pagination
-    padding-top: 20px;
-    text-align: center;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    background: #FBFCFD;
+    width: 100%;
+    height: 50px;
+    padding: 10px;
+    text-align: right;
+    &.is-background
+        button, .number
+            background-color: #fff!important;
+            border: 1px solid #C3C6D6;
+        .number
+            font-weight: normal;
+            color: #4B4F58;
+            &.active
+                border: 1px solid #3083F2;
+                color: #3083F2!important;
+    .el-pagination__total
+        float: left;
 
 // form表单
 .el-form-item__label

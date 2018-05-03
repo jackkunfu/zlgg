@@ -1,97 +1,119 @@
 <template lang="pug">
 div
-    .table-ctn
-        .page-title 小区管理
-        .search-ctn
-            el-form(:model="searchInfo" label-width="80px")
-                el-form-item(label="地区")
-                    el-input(placeholder="请选择地区" v-model="searchInfo.address" @focus="isShowDist=true")
-            el-button(type="success" @click="search") 查询
-            el-button(type="success" @click="reset") 重置
-        self-table(:keys="keys" :tableData="tableData" :total="total" :operates="operates"
-            @changePage="changePage" @chooseRow="chooseRow" @add="add" @edit="edit" @del="del")
+    .main-top
+        .tip
+            | 广告 >> 统计报表 >> 
+            span 播放统计
+    
+    .main-filter
+        .fl
+            | 筛选条件： 
+            span(:class="showFilter ? 'open' : ''" @click="showFilter=!showFilter;") 展开
+                i.el-icon-caret-left
 
-    .edit-ctn.fix-cover(v-show="showEditCtn")
+        .fr
+            .ft-btn
+                i.el-icon-search
+                span 查询
+            .ft-btn
+                i.el-icon-refresh
+                span 重置
+
+    .filter-box(:class="showFilter ? 'open' : ''")
+        .gg-input
+            span 素材名称
+            input(autocomplete="off")
+
+        .gg-input
+            span 广告主
+            input(autocomplete="off")
+
+        .gg-input
+            span 开始时间
+            input(autocomplete="off")
+
+        .gg-input
+            span 结束时间
+            input(autocomplete="off")
+
+
+    self-table(:keys="keys" :tableData="tableData" :total="total" :operates="operates"
+        @changePage="changePage" @chooseRow="chooseRow" @add="add" @edit="edit" @del="del" @view="view")
+
+    .fix-box.large(v-show="isView")
         .box
-            el-form(:model="editInfo" label-width="80px")
-                el-form-item(label="名称")
-                    el-input(v-model="editInfo.placeName")
-                el-form-item(label="行政区域")
-                    el-input(placeholder="请选择地区" v-model="editInfo.address" @focus="isShowDist=true")
-                el-form-item(label="性质")
-                    el-input(v-model="editInfo.appUrl")
-                el-form-item(label="年份")
-                    el-date-picker(v-model="editInfo.createyear" align="right" type="year" placeholder="选择年")
-                el-form-item(label="详细地址")
-                    el-input(v-model="editInfo.address")
-                el-form-item(label="联系人")
-                    el-input(v-model="editInfo.contacter")
-                el-form-item(label="联系电话")
-                    el-input(v-model="editInfo.contactPhone")
-                el-form-item(label="经纬度")
-                    el-input(v-model="editInfo.lon" @focus="isShowMap=true;")
-                    el-input(v-model="editInfo.lat" @focus="isShowMap=true;")
-                    
-                el-form-item
-                    el-button(type="primary" @click="addOrUpdate") 保存
-                    el-button(type="primary" @click="editCancel") 取消
+            .title
+                span 授权电梯
+                i.fr.el-icon-close(@click="isView=false;")
+            .main(style="text-align:center;")
+                .filter-box(:class="showFilter ? 'open' : ''")
+                    .gg-input
+                        span 播出单名称
+                        input(autocomplete="off")
 
-    .tree-ctn.fix-cover(v-show="isShowDist")
-        .box
-            el-tree(:data="distData" :props="defaultProps" @node-click="treeNodeClick")
-            el-button(type="success" @click="chooseDistOk") 确定
-            el-button(type="success" @click="cancelChooseDist") 取消
+                    .gg-input
+                        span 广告商
+                        input(autocomplete="off")
 
-    .fix-cover.map(v-show="isShowMap")
-        .box.map-ctn.center
-            .map-search
-                el-input.search-input(v-model="searchStr" @keyup="searchMap" placeholder="输入关键字")
-                el-button(@click="searchMap") 搜索
-                //- el-input(v-model="clickMapInfo.point.lng" disabled)
-                //- el-input(v-model="clickMapInfo.point.lat" disabled)
-            #map
-            //- el-button(@click="chooseDistOk") 确定
+                    .gg-input
+                        span 播放开始时间
+                        input(autocomplete="off")
 
+                self-table(:keys="detailKeys" :tableData="detailTableData" :total="total" hidePage)
+    
 </template>
 
 <script>
-import map from '../../basic/mixs/map'
-import dist from '../../basic/mixs/dist'
 export default {
-    name: 'place',
-    mixins: [tableManage, map, dist],
+    name: 'playPlan',
+    mixins: [ tableManage ],
     data () {
         return {
+            showFilter: false,
+            isView: true,
+            detailTableData: [],
             keys: [
-                { str: '地址', key: 'address' },
-                { str: '小区名称', key: 'placeName' },
-                { str: '详细地址', key: 'address' },
-                { str: '百度坐标', key: 'remark' }
+                { str: '广告主', key: 'guid' },
+                { str: '素材类型', key: 'userCode' },
+                { str: '素材名称', key: 'userName' },
+                { str: '总播放次数', key: 'mobilephone' },
+                { str: '播放单个数', key: 'remark' },
+                { str: '播放开始时间', key: 'address' },
+                { str: '播放结束时间', key: 'address' },
+                { str: '授权电梯', key: 'address' }
             ],
-            searchKeys: ['address'],
-            editKeys: ['placeName', 'contactPhone', 'contacter', 'address', 'lon', 'lat', 'createyear', 'remark', 'character'],
+            detailKeys: [
+                { str: '广告主', key: 'guid' },
+                { str: '素材类型', key: 'userCode' },
+                { str: '素材名称', key: 'userName' },
+                { str: '所属播放单', key: 'mobilephone' },
+                { str: '所属小区', key: 'mobilephone' },
+                { str: '电梯名称', key: 'mobilephone' },
+                { str: '播放次数', key: 'remark' },
+                { str: '播放开始时间', key: 'address' },
+                { str: '播放结束时间', key: 'address' },
+                { str: '截屏图片', key: 'address' },
+                { str: '截屏记录', key: 'address' }
+            ],
+            searchKeys: [],
             api: {
-                list: { url: '/place/queryPlacePage' },
-                add: { url: '/place/addPlace' },
-                edit: { url: '/place/updatePlace' },
-                del: { url: '/place/delPlace' }
+                list: { url: '/user/queryUser' },
+                del: { url: '/user/deleteUser' }
             },
-            operates: [
-                { str: '新增', fun: 'add'},
-                { str: '修改', fun: 'edit'},
-                { str: '删除', fun: 'del'}
-            ],
-            distData: [],
-            defaultProps: {
-                children: 'children',
-                label: 'districtValue'
-            }
+            scopeOperates: [
+                { str: '查看', fun: 'view'},
+            ]
         }
+        
     },
-    async mounted(){
-        this.distData = await this.getAllDist();
-    },
+    mounted(){},
     methods: {
+        async view(scope){     // 查看详情
+            var res = this.ajax('', { id: scope.row.id });
+            if(res && res.code == 200){
+                this.detailTableData = res.data;
+            }
+        },
         changeSearchValue(info){
             info.operatorUserId = localStorage.zlOpUid || 43;
             return info;
@@ -99,14 +121,15 @@ export default {
         testInput(){
             return true
         },
-        changeEditValue(info){   //  新增编辑之前触发再次处理下参数
+        changeEditValue(info){
             info.operatorUserId = localStorage.zlOpUid || 43;
-            delete info.mapInfo;
-            console.log(info.distInfo)
             return info;
         },
-        handleDelRow(row){    // 删除请求之前处理参数，一般用于传参不统一  有的传id 有guid..
-            return { id: row.id }
+        handleDelRow(item){
+            return {
+                guid: item.guid,
+                operatorUserId: localStorage.zlOpUid || '43'
+            }
         }
     }
 

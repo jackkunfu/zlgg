@@ -9,30 +9,28 @@ export default function(Vue){
             'Content-Type': 'application/json',
         }
         if(localStorage.zlUserToken) headers.token = localStorage.zlUserToken;
-        console.log(headers)
+        // console.log(headers)
         return new Promise((rs, rj) => {
             $.ajax({
-                type: type,
-                url: url.substring(0, 5) === '/api/' ? url : config.api + url,
+                type,
+                // url: url.substring(0, 5) === '/api/' ? url : config.api + url,
+                url,
                 headers,
                 dataType: 'json',
                 // 如果是post请求，需要JSON.stringify处理下参数，因为设置'Content-Type': 'application/json'
                 data: type != 'get' ? JSON.stringify(data) : data, 
-                data,
+                // data,
                 // crossDomian: true,
                 xhrFields: {
                     withCredentials: true
                 }
             }).done( data => {
-                // if(data.code === 403) return this.messageTip(data.msg, false);
-                // if(data.code === 900401){
-                //     this.messageTip(data.msg, false);
-                //     this.goUrl('/');
-                // }
-                if(data.code != 200) this.messageTip(data.msg, false);
+                console.log('success')
                 rs(data);
-            }).fail(function(e){
-                this.messageTip('请求失败，请稍后重试~', false);
+                if(data.code != 900200) this.messageTip(data.msg);
+                if(data.code == 900400) this.goUrl('/')
+            }).fail( e => {
+                // this.messageTip('请求失败，请稍后重试~');
                 console.log('请求出错：' + url)
                 console.log(e)
                 rj(e);
@@ -66,7 +64,7 @@ export default function(Vue){
         var needChangeSearchInfo = this.changeSearchValue && typeof this.changeSearchValue == 'function';
         var options = needChangeSearchInfo ? this.changeSearchValue(copySearchInfo) : copySearchInfo;
         options.pageNum = this.curPage;
-        options.pageSize = 10
+        options.pageSize = this.row;
         var res = await this.ajax(this.api.list.url, options, this.api.list.type || 'get');
         if(res && res.code == 0){
             var result = res.data
@@ -178,14 +176,32 @@ export default function(Vue){
     },
 
     Vue.prototype.upfileProto = async function(str, cb){
-        var data = this.$refs[str].files[0];
-        console.log(data);
+        var file = this.$refs[str].files[0];
+        console.log(file);
         var fd = new FormData();
-        fd.append('file', data);
-        var up = await this.ajax('', fd)
-        if(up && up.code == 200){
-            if(cb && typeof this[cb] == 'function') this[cb](up.data);
-        }
+        fd.append('Filedata', file);
+        $.ajax({
+            type: 'POST',
+            url: '/fs/upload',
+            data: fd,
+            crossDomain: true,
+            contentType: false,
+            processData: false,
+            xhrFields: {
+                withCredentials: true
+            },
+            success: data => {
+                this.messageTip("上传成功~", 1);
+                this[cb](file, data);
+            },
+            error: data => {
+                this.messageTip("上传出错, 请稍后重试~");
+            }
+        });
+        // var up = await this.ajax('/fs/upload', fd)
+        // if(up && up.code == 200){
+        //     if(cb && typeof this[cb] == 'function') this[cb](up.data);
+        // }
     },
 
 

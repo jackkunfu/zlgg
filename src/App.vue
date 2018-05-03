@@ -101,11 +101,11 @@ export default {
                 userCode: form.userCode.trim(),
                 password: form.password.trim()
             });
-            if(res.code === 200){
+            if(res.code === 900200){
                 var data = res.data;
                 localStorage.zlUserToken = data.token;
                 localStorage.zlOpUesrInfo = JSON.stringify(data.userInfo);
-                this.messageTip(res.message || '登录成功', 1);
+                this.messageTip(res.msg || '登录成功', 1);
                 this.isNeedLogin = false;
                 this.goUrl('/index')
             }
@@ -116,10 +116,11 @@ export default {
         },
         async exit(){
             var res = await this.ajax('/loginOut');
-            localStorage.zlUserToken = '';
-            this.isNeedLogin = true;
-            if(res && res.code == 200){
-                
+            
+            if(res && res.code == 900200){
+                localStorage.zlUserToken = '';
+                this.isNeedLogin = true;
+                this.goUrl('/');
             }
         }
     }

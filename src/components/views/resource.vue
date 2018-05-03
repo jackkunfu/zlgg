@@ -7,7 +7,7 @@ div
 
         .fr
             .gg-btn 上传
-                input.upfile(type="file" @change="upfile('up1')" ref="up1")
+                input.upfile(type="file" @change="upfile('up1', 'upfileOk')" ref="up1")
             .gg-btn.white(@click="revertUI") 转为UI素材
             .gg-btn.white 审批
             .gg-btn.white(@click="del") 删除
@@ -66,6 +66,8 @@ div
                     span(v-if="item.size") ({{item.size | size}})
             .see(@click="viewImg(item.image)") 点击查看
 
+    el-pagination(background layout="total, sizes, prev, pager, next, jumper" :total="100" @current-change="changePage")
+
     .fix-box(v-show="isView")
         .box
             .title
@@ -120,7 +122,7 @@ div
 <script>
 export default {
     name: 'resource',
-    mixins: [tableManage],
+    mixins: [ tableManage ],
     data () {
         return {
             showFilter: false,   // 是否暂时筛选条件
@@ -224,6 +226,11 @@ export default {
             var data = this.list.filter( v => v.checked );
             console.log(data);
             // return this.list.filter( v => v.checked );
+        },
+        upfileOk(file, data){
+            console.log(file);
+            console.log(data);
+            this.list();
         }
     }
 }

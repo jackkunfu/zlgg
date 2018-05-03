@@ -38,7 +38,7 @@
                     el-button(v-for="(op, i) in scopeOperates" type="success" size="small" :key="op.str"
                         @click="operate(op.fun, scope)") {{op.str}}
 
-        el-pagination(v-if="!hidePage" layout="total, prev, pager, next, jumper" :total="total" :page-size="10"
+        el-pagination(v-if="!hidePage" layout="total, sizes, prev, pager, next, jumper" :total="total" :page-size="10"
             :current-page="currentPage" @current-change="handleCurrentChange" ref="page")
 
 </template>

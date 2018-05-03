@@ -4,7 +4,8 @@ export default {
             editInfo: {},    //  编辑的数据对象
             searchInfo: {},    // 搜索数据对象
             tableData: [],    // 列表数据数组
-            curPage: 1,    // 当前页
+            curPage: 1,    // 当前页,
+            row: 10,      // 每页显示条数
             total: 0,    // 总条数
             curChooseRow: null,   // 当前选中列表中的项序号
             showEditCtn: false,    // 展示编辑框
