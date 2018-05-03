@@ -62,6 +62,8 @@ div(style="padding:50px 0;")
                     span(v-if="item.size") ({{item.size | size}})
             .see(@click="viewImg(item.image)") 点击查看
 
+    el-pagination(background layout="total, sizes, prev, pager, next, jumper" :total="100" @current-change="changePage")
+
     .fix-box(v-show="isView")
         .box
             .title

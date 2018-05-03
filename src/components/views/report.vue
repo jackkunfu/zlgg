@@ -36,12 +36,11 @@ div
             span 结束时间
             input(autocomplete="off")
 
-
     self-table(:keys="keys" :tableData="tableData" :total="total" :operates="operates"
         @changePage="changePage" @chooseRow="chooseRow" @add="add" @edit="edit" @del="del" @view="view")
 
-    .fix-box.large(v-show="isView")
-        .box
+    .fix-box(v-show="isView")
+        .box.large
             .title
                 span 授权电梯
                 i.fr.el-icon-close(@click="isView=false;")

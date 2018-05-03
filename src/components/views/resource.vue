@@ -9,7 +9,7 @@ div
             .gg-btn 上传
                 input.upfile(type="file" @change="upfile('up1', 'upfileOk')" ref="up1")
             .gg-btn.white(@click="revertUI") 转为UI素材
-            .gg-btn.white 审批
+            .gg-btn.white(@click="approval ") 审批
             .gg-btn.white(@click="del") 删除
     
     .main-filter
@@ -34,15 +34,6 @@ div
         .gg-input
             span 用户名
             input(autocomplete="off")
-            
-
-        //- .page-title 小区管理
-        //- .search-ctn
-            el-form(:model="searchInfo" label-width="80px")
-                el-form-item(label="地区")
-                    el-input(placeholder="请选择地区" v-model="searchInfo.address" @focus="isShowDist=true")
-            el-button(type="success" @click="search") 查询
-            el-button(type="success" @click="reset") 重置
 
     .list
         .gg-resource-box(v-for="(item, i) in list")
@@ -219,12 +210,21 @@ export default {
         handleDelRow(row){    // 删除请求之前处理参数，一般用于传参不统一  有的传id 有guid..
             return { id: row.id }
         },
-        revertUI(){    // 转UI素材
-
+        async revertUI(){    // 转UI素材
+            var ids = this.getChoose();
+            if(!ids) return this.messageTip('请先勾选素材~');
+            var res = await this.ajax('', { ids });
+        },
+        async approval(){   // 审批
+            var ids = this.getChoose();
+            if(!ids) return this.messageTip('请先勾选素材~');
+            var res = await this.ajax('', { ids });
         },
         getChoose(){
-            var data = this.list.filter( v => v.checked );
+            var data = this.list.filter( v => v.checked ).map( v => v.id );
+            if(data.length == 0) return ''
             console.log(data);
+            return data.join(',');
             // return this.list.filter( v => v.checked );
         },
         upfileOk(file, data){
