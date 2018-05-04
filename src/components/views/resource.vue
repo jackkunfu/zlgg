@@ -6,8 +6,7 @@ div
             span 素材管理
 
         .fr
-            .gg-btn 上传
-                input.upfile(type="file" @change="upfile('up1', 'upfileOk')" ref="up1")
+            .gg-btn(@click="isViewOwns=true;") 上传
             .gg-btn.white(@click="revertUI") 转为UI素材
             .gg-btn.white(@click="approval ") 审批
             .gg-btn.white(@click="del") 删除
@@ -36,7 +35,7 @@ div
             input(autocomplete="off")
 
     .list
-        .gg-resource-box(v-for="(item, i) in list")
+        .gg-resource-box(v-for="(item, i) in tableData")
             el-checkbox.check(v-model="item.checked")
             .status
                 img(src="tongguo.png" v-if="item.status == 0")
@@ -67,6 +66,19 @@ div
             .main(style="text-align:center;")
                 img.img-view(:src="curViewImage")
 
+    .fix-box(v-show="isViewOwns")
+        .box
+            .title
+                span 广告主列表
+                i.fr.el-icon-close(@click="isViewOwns=false;")
+            .main(style="text-align:center;")
+                self-table(:keys="detailKeys" :tableData="detailTableData" :total="detailTabletTotal"
+                    @changePage="changePage('detailTableData')" @current-change="chooseRow")
+
+                //- .gg-btn 确定
+                .gg-btn(@click="startUpfile") 上传
+                    input.upfile.no-click(type="file" @change="upfile('up1', 'upfileOk')" ref="up1")
+                
     //- .edit-ctn.fix-cover(v-show="showEditCtn")
         .box
             el-form(:model="editInfo" label-width="80px")
@@ -117,7 +129,7 @@ export default {
     data () {
         return {
             showFilter: false,   // 是否暂时筛选条件
-            list: [
+            tableData: [
                 {
                     image: 'http://img.hb.aicdn.com/2347b45b5fedd832b1378debc07bef8381599a8e72840-yJgXXj_fw658',
                     name: '明光广告',
@@ -136,24 +148,28 @@ export default {
             ],
             curViewImage: '',
             isView: false,
-            // keys: [
-            //     { str: '广告主', key: 'address' },
-            //     { str: '素材类型', key: 'placeName' },
-            //     { str: '素材名称', key: 'address' },
-            //     { str: '总播放次数', key: 'remark' },
-            //     { str: '播放单个数', key: 'remark' },
-            //     { str: '播放开始时间', key: 'remark' },
-            //     { str: '播放结束时间', key: 'remark' },
-            //     { str: '授权电梯', key: 'remark' },
-            // ],
+            isViewOwns: false,     // 上传显示广告主
+            detailKeys: [
+                { str: '广告主', key: 'address' },
+                { str: '素材类型', key: 'placeName' },
+                { str: '素材名称', key: 'address' },
+                { str: '总播放次数', key: 'remark' },
+                { str: '播放单个数', key: 'remark' },
+                { str: '播放开始时间', key: 'remark' },
+                { str: '播放结束时间', key: 'remark' },
+                { str: '授权电梯', key: 'remark' },
+            ],
             searchKeys: ['address'],
             editKeys: ['placeName', 'contactPhone', 'contacter', 'address', 'lon', 'lat', 'createyear', 'remark', 'character'],
             api: {
-                list: { url: '/place/queryPlacePage' },
-                add: { url: '/place/addPlace' },
-                edit: { url: '/place/updatePlace' },
+                list: { url: '/api/resourceinfo/queryResourceInfoPage', type: 'post' },
                 del: { url: '/place/delPlace' }
             },
+            detailTableData: [],    // 广告主列表数据
+            detailTableDataApi: {
+                list: { url: '/place/queryPlacePage' }
+            },
+            detailTabletTotal: 0,
             operates: [
                 { str: '新增', fun: 'add'},
                 { str: '修改', fun: 'edit'},
@@ -163,7 +179,8 @@ export default {
             defaultProps: {
                 children: 'children',
                 label: 'districtValue'
-            }
+            },
+            curOwn: null     // 当前选择的广告主
         }
     },
     async mounted(){
@@ -227,10 +244,23 @@ export default {
             return data.join(',');
             // return this.list.filter( v => v.checked );
         },
-        upfileOk(file, data){
-            console.log(file);
-            console.log(data);
-            this.list();
+        startUpfile(){
+            // if(!this.curOwn) return this.messageTip('请选择广告主~');
+            $(this.$refs.up1).click();
+        },
+        chooseRow(curItem, old){
+            this.curOwn = curItem;
+        },
+        async upfileOk(file, data){   // 新增上传
+            console.log(typeof data);
+            if(typeof data == 'string') data = JSON.parse(data);
+            delete data.code;
+            delete data.message;
+            // data.adOwnerGuid = this.curOwn.guid;
+            // data.adOwnerName = this.curOwn.adOwnerName;
+            data.adOwnerGuid = 0;
+            data.adOwnerName = '广告主名称';
+            this.ajax('/api/resourceinfo/saveAdvResourceinfo', data);
         }
     }
 }

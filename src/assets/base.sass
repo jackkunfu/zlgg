@@ -309,6 +309,8 @@ input.upfile
     width: 100%;
     height: 100%;
     cursor: pointer;
+    &.no-click   //  需要判断才触发选择文件的加这个类  不会被点击到
+        z-index: -1;
 
 // 弹框
 .fix-box

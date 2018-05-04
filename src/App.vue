@@ -85,7 +85,7 @@ export default {
     async mounted(){
         if(!this.isNeedLogin){
             // 获取菜单
-            var res = await this.ajax('/getUserAuthMenu');
+            var res = await this.ajax('/api/getUserAuthMenu');
             console.log(res);
         }
     },
@@ -97,7 +97,7 @@ export default {
 
             if(this.isResLogin) return
             this.isResLogin = true;
-            var res = await this.ajax('/login', {
+            var res = await this.ajax('/api/login', {
                 userCode: form.userCode.trim(),
                 password: form.password.trim()
             });
@@ -112,10 +112,10 @@ export default {
             this.isResLogin = false;
         },
         async changePwd(){
-            var res = await this.ajax('/modifyPassword', this.change);
+            var res = await this.ajax('/api/modifyPassword', this.change);
         },
         async exit(){
-            var res = await this.ajax('/loginOut');
+            var res = await this.ajax('/api/loginOut');
             
             if(res && res.code == 900200){
                 localStorage.zlUserToken = '';

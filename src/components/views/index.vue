@@ -21,8 +21,9 @@ export default {
         }
     },
     mounted(){
-        this.$nextTick(()=>{
-        })
+        if(!localStorage.zlUserToken){
+            console.log(this.$parent);
+        }
     },
     methods: {
         

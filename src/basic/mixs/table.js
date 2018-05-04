@@ -22,8 +22,8 @@ export default {
     },
 
     methods: {
-        changePage(v){    // 翻页
-            this.pageChange.call(this, v);
+        changePage(v, tableStr){    // 翻页
+            this.pageChange.call(this, v, tableStr);
         },
         search(){    // 搜索
             this.tableSearch.call(this);
