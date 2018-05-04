@@ -44,7 +44,7 @@ div
             .img-ctn
                 img(:src="item.image")
             .info
-                .name {{item.name}}
+                .name {{item.adOwnerName}}
                 .time {{item.time}}
                 .type
                     template(v-if="item.type==1")
@@ -184,10 +184,10 @@ export default {
         }
     },
     async mounted(){
-        this.imgResize();    // 调整图片自适应填充
+        this.imgResize();    
     },
     methods: {
-        imgResize(){
+        imgResize(){   // 调整图片自适应填充
             $('.img-ctn img').each( function(i, el){
                 var img = $(el).get(0);
                 img.onload = function(){   // 图片加载完成处理事件
@@ -258,9 +258,23 @@ export default {
             delete data.message;
             // data.adOwnerGuid = this.curOwn.guid;
             // data.adOwnerName = this.curOwn.adOwnerName;
+            data.resourceAddress = data.reourceAddress;
+            delete data.reourceAddress;
             data.adOwnerGuid = 0;
             data.adOwnerName = '广告主名称';
-            this.ajax('/api/resourceinfo/saveAdvResourceinfo', data);
+            var upRes = this.ajax('/api/resourceinfo/saveAdvResourceinfo', data);
+            if(upRes && upRes.code == this.successCode){
+                this.isViewOwns = false;
+                this.curOwn = null;
+                this.tableList();
+            }
+        }
+    },
+    watch: {
+        tableData(){
+            this.$nextTick(()=>{
+                this.imgResize();
+            })
         }
     }
 }

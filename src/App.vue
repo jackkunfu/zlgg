@@ -101,7 +101,7 @@ export default {
                 userCode: form.userCode.trim(),
                 password: form.password.trim()
             });
-            if(res.code === 900200){
+            if(res.code === this.successCode){
                 var data = res.data;
                 localStorage.zlUserToken = data.token;
                 localStorage.zlOpUesrInfo = JSON.stringify(data.userInfo);
@@ -117,7 +117,7 @@ export default {
         async exit(){
             var res = await this.ajax('/api/loginOut');
             
-            if(res && res.code == 900200){
+            if(res && res.code == this.successCode){
                 localStorage.zlUserToken = '';
                 this.isNeedLogin = true;
                 this.goUrl('/');

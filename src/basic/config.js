@@ -1,3 +1,4 @@
 export default {
-    api: '/api'
+    api: '/api',
+    successCode: 0
 }

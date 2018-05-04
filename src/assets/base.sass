@@ -67,6 +67,7 @@ input:focus
         top: 0;
         left: 0;
         background: #fff;
+        z-index: 4;
 
         .left-bottom
             width: 180px;
@@ -96,7 +97,8 @@ input:focus
             width: 100%;
             min-width: 620px;
             padding: 10px 20px;
-            position: absolute;
+            padding-left: 200px;
+            position: fixed;
             left: 0;
             z-index: 3;
             font-size: 14px;
@@ -142,6 +144,10 @@ input:focus
                 cursor: pointer;
     
         .filter-box
+            position: fixed;
+            top: 90px;
+            width: 100%;
+            z-index: 3;
             height: 0;
             opacity: 0;
             overflow: hidden;
@@ -217,7 +223,7 @@ input:focus
 
 // 翻页
 .el-pagination
-    position: absolute;
+    position: fixed;
     left: 0;
     bottom: 0;
     background: #FBFCFD;
@@ -225,6 +231,8 @@ input:focus
     height: 50px;
     padding: 10px;
     text-align: right;
+    z-index: 3;
+    padding-left: 190px;
     &.is-background
         button, .number
             background-color: #fff!important;

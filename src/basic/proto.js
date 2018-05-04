@@ -1,6 +1,7 @@
 import config from './config'
 
 export default function(Vue){
+    Vue.prototype.successCode = 0;
     // ajax
     Vue.prototype.ajax = function(url, data, type){
         var data = data || {};
@@ -27,7 +28,7 @@ export default function(Vue){
             }).done( data => {
                 console.log('success')
                 rs(data);
-                if(data.code != 900200) this.messageTip(data.msg);
+                if(data.code != this.successCode) this.messageTip(data.msg);
                 if(data.code == 900400 || data.code == 900401){
                     localStorage.zlUserToken = null;
                     this.goUrl('/');
@@ -79,7 +80,7 @@ export default function(Vue){
         var type = tableStr ? this[tableStr+'Api'].list.url : this.api.list.type;
 
         var res = await this.ajax(url, options, type || 'get');
-        if(res && res.code == 900200){
+        if(res && res.code == this.successCode){
             var result = res.data
             if(tableStr){
                 this[tableStr] = result.list;
@@ -153,7 +154,7 @@ export default function(Vue){
             var oriData = Object.assign({}, this.curChooseRow);
             var options = neesChangeOptions ? this.handleDelRow(oriData) : { guid: oriData.guid }
             var res = await this.ajax(op.url, options, op.type || 'delete')
-            if(res.code == 900200){
+            if(res.code == this.successCode){
                 this.messageTip(res.message || '操作成功', 1);
                 this.tableList.call(this);
             }else this.messageTip(res.message || '操作失败')
@@ -180,7 +181,7 @@ export default function(Vue){
         // 请求
         var res = await this.ajax(op.url, options, op.type || 'post');
         console.log(res);
-        if(res.code == 900200){
+        if(res.code == this.successCode){
             this.messageTip(res.message, 1);
 
             // 重置一些数据状态
@@ -196,7 +197,7 @@ export default function(Vue){
     // 获取地区树
     Vue.prototype.getAllDist = async function(){
         var res = await this.ajax('/dist/queryDistAuthedTree', { operatorUserId: localStorage.zlOpUid || 43, level: 4 }, 'get');
-        if(res.code ==  900200 && res.data && res.data.length > 0) return res.data;
+        if(res.code == this.successCode && res.data && res.data.length > 0) return res.data;
         else return [];
     },
 
@@ -224,7 +225,7 @@ export default function(Vue){
             }
         });
         // var up = await this.ajax('/fs/upload', fd)
-        // if(up && up.code == 200){
+        // if(up && up.code == this.successCode){
         //     if(cb && typeof this[cb] == 'function') this[cb](up.data);
         // }
     },
@@ -268,7 +269,7 @@ export default function(Vue){
             var oriData = Object.assign({}, arguments[0].row || {});
             var options = neesChangeOptions ? this.handleDelRow(oriData) : { guid: oriData.guid }
             var res = await this.ajax(op.url, options, op.type || 'delete')
-            if(res.code == 900200){
+            if(res.code == this.successCode){
                 this.messageTip(res.message || '操作成功', 1);
                 this.tableList.call(this);
             }else this.messageTip(res.message || '操作失败')
