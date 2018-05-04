@@ -8,7 +8,7 @@ div
         .fr
             .gg-btn(@click="isViewOwns=true;") 上传
             .gg-btn.white(@click="revertUI") 转为UI素材
-            .gg-btn.white(@click="approval ") 审批
+            .gg-btn.white(@click="approval") 审批
             .gg-btn.white(@click="del") 删除
     
     .main-filter
@@ -38,34 +38,41 @@ div
         .gg-resource-box(v-for="(item, i) in tableData")
             el-checkbox.check(v-model="item.checked")
             .status
-                img(src="tongguo.png" v-if="item.status == 0")
-                img(src="shenpizhong.png" v-if="item.status == 1")
-                img(src="butongguo.png" v-if="item.status == 2")
+                img(src="shenpizhong.png" v-if="item.checkStatus == 1")
+                img(src="tongguo.png" v-if="item.checkStatus == 2")
+                img(src="butongguo.png" v-if="item.checkStatus == 3")
             .img-ctn
-                img(:src="item.image")
+                img(:src="item.httpsReourceAddress")
             .info
                 .name {{item.adOwnerName}}
                 .time {{item.time}}
                 .type
-                    template(v-if="item.type==1")
-                        i.el-icon-picture-outline
-                        | 图片素材
-                    template(v-if="item.type==2")
+                    //- i.el-icon-picture-outline(v-if="item.typeName=='文字素材'")
+                    //- span {{item.typeName}}
+                    template(v-if="item.typeCode==1")
                         i.el-icon-picture-outline
                         | 视频素材
-                    span(v-if="item.size") ({{item.size | size}})
-            .see(@click="viewImg(item.image)") 点击查看
+                    template(v-if="item.typeCode==2")
+                        i.el-icon-picture-outline
+                        | 图片素材
+                    template(v-if="item.typeCode==3")
+                        i.el-icon-picture-outline
+                        | 文字素材
+                    span(v-if="item.size") ({{item.resourceSize | size}})
+            .see(@click="viewResource(item.httpsReourceAddress, item.typeCode)") 点击查看
 
-    el-pagination(background layout="total, sizes, prev, pager, next, jumper" :total="100" @current-change="changePage")
+    el-pagination(background layout="total, sizes, prev, pager, next, jumper" :total="total" @current-change="changePage")
 
     .fix-box(v-show="isView")
         .box
             .title
                 span 素材查看
-                i.fr.el-icon-close(@click="isView=false;curViewImage=''")
+                i.fr.el-icon-close(@click="isView=false;curViewResource='';")
             .main(style="text-align:center;")
-                img.img-view(:src="curViewImage")
-
+                video(:src="curViewResource" autoplay="true" v-if="viewType==1")
+                img.img-view(:src="curViewResource" v-if="viewType==2")
+                div(v-if="viewType==3") {{curViewResource}}
+                
     .fix-box(v-show="isViewOwns")
         .box
             .title
@@ -78,7 +85,16 @@ div
                 //- .gg-btn 确定
                 .gg-btn(@click="startUpfile") 上传
                     input.upfile.no-click(type="file" @change="upfile('up1', 'upfileOk')" ref="up1")
-                
+
+    .fix-box(v-show="isApproval")
+        .box
+            .title
+                span 审批素材
+                i.fr.el-icon-close(@click="isApproval=false;")
+            .main(style="text-align:center;")
+                .gg-btn(@click="approvalSubmit(2)") 通过
+                .gg-btn.white(@click="approvalSubmit(3)") 不通过
+
     //- .edit-ctn.fix-cover(v-show="showEditCtn")
         .box
             el-form(:model="editInfo" label-width="80px")
@@ -130,25 +146,27 @@ export default {
         return {
             showFilter: false,   // 是否暂时筛选条件
             tableData: [
-                {
-                    image: 'http://img.hb.aicdn.com/2347b45b5fedd832b1378debc07bef8381599a8e72840-yJgXXj_fw658',
-                    name: '明光广告',
-                    status: 0,
-                    time: '2016/01/01',
-                    type: 1,
-                    size: 10.4
-                },
-                {
-                    image: 'http://img.hb.aicdn.com/e3c19f8347f45db607869fa863d011da25e4b5b318e29-ZPuaH1_fw658',
-                    name: '明光广告',
-                    status: 0,
-                    time: '2016/01/01',
-                    type: 2
-                }
+                // {
+                //     image: 'http://img.hb.aicdn.com/2347b45b5fedd832b1378debc07bef8381599a8e72840-yJgXXj_fw658',
+                //     name: '明光广告',
+                //     status: 0,
+                //     time: '2016/01/01',
+                //     type: 1,
+                //     size: 10.4
+                // },
+                // {
+                //     image: 'http://img.hb.aicdn.com/e3c19f8347f45db607869fa863d011da25e4b5b318e29-ZPuaH1_fw658',
+                //     name: '明光广告',
+                //     status: 0,
+                //     time: '2016/01/01',
+                //     type: 2
+                // }
             ],
-            curViewImage: '',
+            curViewResource: '',
+            viewType: null,
             isView: false,
             isViewOwns: false,     // 上传显示广告主
+            isApproval: false,    // 审批确认
             detailKeys: [
                 { str: '广告主', key: 'address' },
                 { str: '素材类型', key: 'placeName' },
@@ -201,14 +219,20 @@ export default {
                 }
             })
         },
-        viewImg(src, isImage){    // 查看素材, 
+        viewResource(src, typeCode){    // 查看素材, 
             this.isView = true;
-            if(!isImage){
-                this.curViewImage = src;
+            this.viewType = typeCode
+            this.curViewResource = src;
+            if(typeCode == 1){
+
+            }else if(typeCode == 2){
+                // this.curViewResource = src;
                 $('.img-view').get(0).onload = function(){
                     $(this).removeClass('center-center');
                     if(this.height < $(this).parent().height()) $(this).addClass('center-center');
                 }
+            }else if(typeCode == 3){
+                
             }
         },
         changeSearchValue(info){
@@ -232,13 +256,31 @@ export default {
             if(!ids) return this.messageTip('请先勾选素材~');
             var res = await this.ajax('', { ids });
         },
-        async approval(){   // 审批
+        approval(){   // 审批
             var ids = this.getChoose();
             if(!ids) return this.messageTip('请先勾选素材~');
-            var res = await this.ajax('', { ids });
+            this.isApproval = true;
+        },
+        async approvalSubmit(type){
+            var ids = this.getChoose();
+            var res = await this.ajax('/api/resourceinfo/updateCheckStatus', { guids: ids, status: type });
+            if(res && res.code == this.successCode){
+                this.messageTip('操作成功~', 1);
+                this.isApproval = false;
+                this.tableList.call(this);
+            }
+        },
+        async del(){   // 删除
+            var ids = this.getChoose();
+            if(!ids) return this.messageTip('请先勾选素材~');
+            var res = await this.ajax('/api/resourceinfo/batchSoftDelete/'+encodeURIComponent(ids), {}, 'DELETE');
+            if(res && res.code == this.successCode){
+                this.messageTip('操作成功~', 1)
+                this.tableList.call(this);
+            }
         },
         getChoose(){
-            var data = this.list.filter( v => v.checked ).map( v => v.id );
+            var data = this.tableData.filter( v => v.checked ).map( v => v.guid );
             if(data.length == 0) return ''
             console.log(data);
             return data.join(',');
@@ -266,12 +308,15 @@ export default {
             if(upRes && upRes.code == this.successCode){
                 this.isViewOwns = false;
                 this.curOwn = null;
-                this.tableList();
+                this.tableList.call(this);
             }
         }
     },
     watch: {
-        tableData(){
+        tableData(arr){
+            arr.forEach(v => {
+                this.$set(v, 'checked', false)
+            })
             this.$nextTick(()=>{
                 this.imgResize();
             })

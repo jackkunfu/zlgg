@@ -1,4 +1,5 @@
 import config from './config'
+import { Loading } from 'element-ui';
 
 export default function(Vue){
     Vue.prototype.successCode = 0;
@@ -12,6 +13,7 @@ export default function(Vue){
         if(localStorage.zlUserToken && url != '/api/login') headers.token = localStorage.zlUserToken;
         // console.log(headers)
         return new Promise((rs, rj) => {
+            var loading = Loading.service({});
             $.ajax({
                 type,
                 // url: url.substring(0, 5) === '/api/' ? url : config.api + url,
@@ -27,6 +29,7 @@ export default function(Vue){
                 }
             }).done( data => {
                 console.log('success')
+                loading.close()
                 rs(data);
                 if(data.code != this.successCode) this.messageTip(data.msg);
                 if(data.code == 900400 || data.code == 900401){
@@ -143,16 +146,16 @@ export default function(Vue){
     }
     // 点击删除
     Vue.prototype.tableDel = function(){
-        if(this.curChooseRow === null) return this.messageTip('请选择要编辑的项~');
-        this.$confirm('此操作将删除用户, 是否继续?', '提示', {
+        if(this.curChooseRow === null) return this.messageTip('请选择要删除的项~');
+        this.$confirm('此操作将删除, 是否继续?', '提示', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             type: 'warning'
         }).then(async () => {
             var op = this.api.del;
-            var neesChangeOptions = this.handleDelRow && typeof this.handleDelRow == 'function'
+            var needChangeOptions = this.handleDelRow && typeof this.handleDelRow == 'function'
             var oriData = Object.assign({}, this.curChooseRow);
-            var options = neesChangeOptions ? this.handleDelRow(oriData) : { guid: oriData.guid }
+            var options = needChangeOptions ? this.handleDelRow(oriData) : { guid: oriData.guid }
             var res = await this.ajax(op.url, options, op.type || 'delete')
             if(res.code == this.successCode){
                 this.messageTip(res.message || '操作成功', 1);
@@ -265,9 +268,9 @@ export default function(Vue){
             type: 'warning'
         }).then(async () => {
             var op = this.api.del;
-            var neesChangeOptions = this.handleDelRow && typeof this.handleDelRow == 'function'
+            var needChangeOptions = this.handleDelRow && typeof this.handleDelRow == 'function'
             var oriData = Object.assign({}, arguments[0].row || {});
-            var options = neesChangeOptions ? this.handleDelRow(oriData) : { guid: oriData.guid }
+            var options = needChangeOptions ? this.handleDelRow(oriData) : { guid: oriData.guid }
             var res = await this.ajax(op.url, options, op.type || 'delete')
             if(res.code == this.successCode){
                 this.messageTip(res.message || '操作成功', 1);
